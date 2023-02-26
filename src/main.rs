@@ -12,14 +12,11 @@ fn main() {
     let _ = args.next(); // ignore first, (this is us)
     let command = args.next().unwrap();
 
-    // println!("{args:?}");
-    let status = dbg!(Command::new(command)
-        .args(args)
+    let status = dbg!(Command::new(command).args(args))
         .stdout(stdout)
-        .stderr(stderr))
-    .status()
-    .expect("io error while running command");
+        .stderr(stderr)
+        .status()
+        .expect("io error while running command");
 
     std::process::exit(status.code().unwrap());
-    // todo return status
 }
