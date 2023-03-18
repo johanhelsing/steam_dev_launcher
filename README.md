@@ -12,8 +12,9 @@ your Steam game's directory when launched through Steam.
 - logs stdout and stderr to files in the working directory
 - logs the commands line args your game was launched with
 - set environment variables for your game
-- launch a custom executable instead of the one deployed through Steam. Useful
-  if you want to run a debug build, but test with Steam invites etc.
+- launch a custom executable instead of the one deployed through Steam, but
+  still forwards the command line args from steam. Useful if you want to run a
+  debug build, but test with Steam invites etc.
 - logs the exit code for your game, useful if it crashes when loading dynamic
   libraries etc.
 - logs if the game was killed by a signal
