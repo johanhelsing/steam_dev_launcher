@@ -37,3 +37,40 @@ C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe --env BEVY_ASSET_ROOT=C:/dev/ca
 
 On Windows, you will see a launcher window with some debug logging for the
 launcher. Your game's logs will be in the Steam folder for your game.
+
+Example `launcher.log` after accepting a Steam lobby invite:
+
+```txt
+17:25:02 [INFO] Steam dev launcher: [
+    "C:\\Users\\Johan\\.cargo\\bin\\steam_dev_launcher.exe",
+    "-e",
+    "BEVY_ASSET_ROOT=C:/Users/Johan/dev/cargo_space/",
+    "--custom-exe",
+    "C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe",
+    "--",
+    "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Cargo Space\\cargo_space.exe",
+    "--launcher",
+    "+connect_lobby",
+    "109775243842407186",
+]
+17:25:02 [INFO] Parsed launcher args: Args {
+    env: [
+        (
+            "BEVY_ASSET_ROOT",
+            "C:/Users/Johan/dev/cargo_space/",
+        ),
+    ],
+    custom_exe: Some(
+        "C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe",
+    ),
+    steam_command: [
+        "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Cargo Space\\cargo_space.exe",
+        "--launcher",
+        "+connect_lobby",
+        "109775243842407186",
+    ],
+}
+17:25:02 [INFO] Launching "C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe" instead of "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Cargo Space\\cargo_space.exe"
+17:25:02 [INFO] Launching game: "C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe" "--launcher" "+connect_lobby" "109775243842407186"
+17:25:06 [INFO] Exited with status 0 (no error)
+```
