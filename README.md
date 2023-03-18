@@ -1,9 +1,7 @@
 # Steam dev launcher
 
 Simple stupid wrapper that lets you run your own executable instead of the
-regular one. Which is useful when you're developing a game, and want to test
-builds from your machine instead of what's currently in your game's Steam
-folder.
+regular one and doesn't eat the stdout and stderr logs.
 
 It tries hard not to panic and logs as much as possible to `launcher.log`,
 `stdout.log` and `stderr.log` in the current working directory, which will be
@@ -16,6 +14,9 @@ your Steam game's directory when launched through Steam.
 - set environment variables for your game
 - launch a custom executable instead of the one deployed through Steam. Useful
   if you want to run a debug build, but test with Steam invites etc.
+- logs the exit code for your game, useful if it crashes when loading dynamic
+  libraries etc.
+- logs if the game was killed by a signal
 
 ## Usage
 
