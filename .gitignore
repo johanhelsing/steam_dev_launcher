@@ -1,3 +1,4 @@
 /target
-stdout.txt
-stderr.txt
+stdout.log
+stderr.log
+launcher.log
