@@ -2,15 +2,48 @@
 extern crate log;
 extern crate simplelog;
 
+use clap::Parser;
 use simplelog::*;
 use std::{
-    env,
+    error::Error,
     fs::File,
     process::{Command, Stdio},
 };
 
-/// Should be as simple and stupid as possible, and avoid panics as much as
-/// possible, as those will not be visible anywhere.
+/// Parse a single key-value pair
+fn parse_key_val<T, U>(s: &str) -> Result<(T, U), Box<dyn Error + Send + Sync + 'static>>
+where
+    T: std::str::FromStr,
+    T::Err: Error + Send + Sync + 'static,
+    U: std::str::FromStr,
+    U::Err: Error + Send + Sync + 'static,
+{
+    let pos = s
+        .find('=')
+        .ok_or_else(|| format!("invalid KEY=value: no `=` found in `{s}`"))?;
+    Ok((s[..pos].parse()?, s[pos + 1..].parse()?))
+}
+
+#[derive(Parser, Debug)]
+struct Args {
+    #[arg(short = 'e', long = "env", value_parser = parse_key_val::<String, String>)]
+    env: Vec<(String, String)>,
+
+    // /// Set a custom working directory (pwd) for the spawned child process
+    // ///
+    // ///  if unset, we will use the working directory of the replaced game
+    // /// executable (i.e. it will run in your game's Steam directory)
+    // #[clap(long)]
+    // working_directory: Option<String>,
+    #[clap(long, short = 'c')]
+    custom_exe: Option<String>,
+
+    #[arg(last = true)]
+    steam_command: Vec<String>,
+}
+
+/// Should simple and stupid, and avoid panics as much as possible, as those
+/// will not be visible anywhere.
 ///
 /// Steam swallows std-out everything should be communicated through files
 /// in the working directory, when launched through Steam, this means the game's
@@ -33,10 +66,34 @@ fn main() {
     // todo: how can we tell the user that logging init failed?
     .unwrap();
 
-    let mut args = env::args();
-
     // first lets just log the args, for sanity's sake
-    info!("Steam dev launcher: {args:?}");
+    info!(
+        "Steam dev launcher: {:#?}",
+        std::env::args().collect::<Vec<String>>()
+    );
+
+    let Some(this_executable) = std::env::args().next() else {
+        // I think this can never happen, but let's just be thorough
+        error!("no arguments");
+        return;
+    };
+
+    let args = match Args::try_parse() {
+        Ok(args) => args,
+        Err(err) => {
+            error!("Failed to parse launcher args: {err}");
+            return;
+        }
+    };
+
+    info!("Parsed launcher args: {args:#?}");
+
+    let Args {
+        env,
+        // working_directory,
+        custom_exe,
+        steam_command,
+    } = args;
 
     let stdout = match File::create("stdout.log") {
         Ok(f) => Stdio::from(f),
@@ -54,32 +111,27 @@ fn main() {
         }
     };
 
-    let Some(this_executable) = args.next() else {
-        // I think this can never happen, but let's just be thorough
-        error!("no arguments");
-        return;
-    };
+    let mut steam_args = steam_command.iter();
 
-    let Some(replacement_game_executable) = args.next() else {
-        // I think this can never happen, but let's just be thorough
-        error!("Missing replacement executable. This means your Steam
-        configuration is wrong. You probably want to set \"Launch options\" to:
-        \"{this_executable} /full/path/to/dev/build %command%\"");
-        return;
-    };
-
-    // skip original game executable
-    let Some(replaced_game_executable) = args.next() else {
+    // consume original game executable
+    let Some(original_executable) = steam_args.next() else {
         error!("Received no arguments from Steam, this means your Steam
         configuration is wrong. You probably want to set \"Launch options\" to
-        \"{this_executable} /full/path/to/dev/build %command%\"");
+        \"{this_executable} -- %command%\"");
         return;
     };
 
-    info!("Launching {replacement_game_executable:?} instead of {replaced_game_executable:?}");
+    let executable = if let Some(custom) = custom_exe.as_ref() {
+        info!("Launching {custom:?} instead of {original_executable:?}");
+        custom
+    } else {
+        original_executable
+    };
 
-    let mut command = Command::new(replacement_game_executable);
-    command.args(args);
+    let mut command = Command::new(executable);
+    // note with original_executable skipped
+    command.args(steam_args);
+    command.envs(env);
 
     info!("Launching game: {command:#?}");
 
