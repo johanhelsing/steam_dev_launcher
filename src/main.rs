@@ -9,18 +9,19 @@ use std::{
     process::{Command, Stdio},
 };
 
-/// should be as simple and stupid as possible, so it never panics, no matter
-/// what arguments you throw at it
+/// Should be as simple and stupid as possible, and avoid panics as much as
+/// possible, as those will not be visible anywhere.
 ///
 /// Steam swallows std-out everything should be communicated through files
-/// in the working directory, on Steam, this means the games directory.
+/// in the working directory, when launched through Steam, this means the game's
+/// directory.
 fn main() {
     let launcher_log_file = File::create("launcher.log")
         // todo: can we somehow report this more nicely?
         .expect("failed to open launcher log file for writing!");
 
     CombinedLogger::init(vec![
-        // on windows, we get a terminal window, useful to see some output in it
+        // on Windows, we get a terminal window, useful to see some output in it
         TermLogger::new(
             LevelFilter::Info,
             Config::default(),
