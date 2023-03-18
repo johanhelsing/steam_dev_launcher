@@ -30,7 +30,7 @@ C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe -- %command%
 
 Run a debug build of a Bevy, app and set the env var so it finds the assets:
 
-``txt
+```txt
 C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe --env BEVY_ASSET_ROOT=C:/dev/cargo_space/ --custom-exe C:/dev/cargo_space/target/debug/cargo_space.exe -- %command%
 ```
 
