@@ -14,9 +14,11 @@ your Steam game's directory when launched through Steam.
 After installing the app, paste something like this into "Launch Options" in
 your game's "Properties" through the steam UI:
 
+e.g.:
+
 ```txt
-C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe %command%
+C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe --custom-executable C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe -- %command%
 ```
 
-On windows, you will see a launcher window with some debug logging for the
+On Windows, you will see a launcher window with some debug logging for the
 launcher. Your game's logs will be in the Steam folder for your game.
