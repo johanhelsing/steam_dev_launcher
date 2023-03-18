@@ -9,6 +9,14 @@ It tries hard not to panic and logs as much as possible to `launcher.log`,
 `stdout.log` and `stderr.log` in the current working directory, which will be
 your Steam game's directory when launched through Steam.
 
+## Features
+
+- logs stdout and stderr to files in the working directory
+- logs the commands line args your game was launched with
+- set environment variables for your game
+- launch a custom executable instead of the one deployed through Steam. Useful
+  if you want to run a debug build, but test with Steam invites etc.
+
 ## Usage
 
 After installing the app, paste something like this into "Launch Options" in
@@ -17,7 +25,13 @@ your game's "Properties" through the steam UI:
 e.g.:
 
 ```txt
-C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe --custom-executable C:/Users/Johan/dev/cargo_space/target/debug/cargo_space.exe -- %command%
+C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe -- %command%
+```
+
+Run a debug build of a Bevy, app and set the env var so it finds the assets:
+
+``txt
+C:\Users\Johan\.cargo\bin\steam_dev_launcher.exe --env BEVY_ASSET_ROOT=C:/dev/cargo_space/ --custom-exe C:/dev/cargo_space/target/debug/cargo_space.exe -- %command%
 ```
 
 On Windows, you will see a launcher window with some debug logging for the
